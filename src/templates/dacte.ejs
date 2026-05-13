@@ -1,0 +1,651 @@
+<%
+const chunks = (value) => String(value || '').replace(/\s/g, '').match(/.{1,4}/g) || [];
+const componentes = dacte.componentesPrestacao || [];
+const quantidades = dacte.quantidadesCarga || [];
+const documentos = dacte.documentosOriginarios || [];
+const impostos = dacte.impostos || [];
+const modalInfo = dacte.modalRodoviario || [];
+const emitente = dacte.emitente || {};
+const remetente = dacte.remetente || {};
+const destinatario = dacte.destinatario || {};
+const tomador = dacte.tomador || {};
+const emissao = dacte.emissao || '-';
+const protocoloData = dacte.protocoloData || '-';
+const chaveAcesso = dacte.chaveAcesso || '';
+const observacoes = dacte.observacoes || [];
+const barcodeSrc = typeof barcodeDataUrl !== 'undefined' ? barcodeDataUrl : (dacte.barcodeDataUrl || '');
+const qrCodeSrc = typeof qrCodeDataUrl !== 'undefined' ? qrCodeDataUrl : (dacte.qrCodeDataUrl || '');
+const customSectionsList = customSections || [];
+const extraInfo = additionalInfo || {};
+const extraInfoEntries = Object.entries(extraInfo);
+
+const val = (v, fallback='-') => v ?? fallback;
+const findValue = (items, label, fallback='-') =>
+        (items || []).find(i =>
+                String(i.label || '').toUpperCase().includes(label)
+        )?.value || fallback;
+
+const findInfo = (items, label) =>
+        (items || []).find(i =>
+                String(i.label || '').toUpperCase().includes(label)
+        )?.value || '0,00';
+%>
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <title>DACTE <%= dacte.numero %></title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            -webkit-print-color-adjust:exact !important;
+            print-color-adjust:exact !important;
+        }
+
+        @page{
+            size:A4 portrait;
+            margin:4mm;
+        }
+
+        body{
+            font-family:Arial, "Liberation Sans", "DejaVu Sans", Helvetica, sans-serif;
+            font-size:7pt;
+            color:#000;
+        }
+
+        .page{
+            width:202mm;
+        }
+
+        .box{
+            border:1px solid #000;
+            margin-bottom:2px;
+        }
+
+        .grid{
+            display:grid;
+        }
+
+        .line{
+            border-bottom:1px solid #000;
+        }
+
+        .line:last-child{
+            border-bottom:none;
+        }
+
+        .cell{
+            padding:2px 3px;
+            border-right:1px solid #000;
+        }
+
+        .cell:last-child{
+            border-right:none;
+        }
+
+        .gray{
+            background:#efefef;
+        }
+
+        .label{
+            font-size:5pt;
+            text-transform:uppercase;
+            line-height:1;
+            padding:2px;
+        }
+
+        .value{
+            font-size:7pt;
+            font-weight:700;
+            line-height:1.15;
+            text-transform:uppercase;
+        }
+
+        .center{
+            text-align:center;
+        }
+
+        .right{
+            text-align:right;
+        }
+
+        .title{
+            background:#efefef;
+            border-bottom:1px solid #000;
+            padding:2px 3px;
+            font-size:6pt;
+            font-weight:700;
+            text-transform:uppercase;
+        }
+
+        .small{
+            font-size:6pt;
+            line-height:1.2;
+        }
+
+        .big{
+            font-size:10pt;
+            font-weight:700;
+        }
+
+        .key{
+            font-family:"Courier New", "Liberation Mono", "DejaVu Sans Mono", monospace;
+            font-size:6.4pt;
+            font-weight:700;
+            letter-spacing:.15px;
+            white-space:nowrap;
+            line-height:1;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th,td{
+            border-right:1px solid #000;
+            border-bottom:1px solid #000;
+            padding:2px 3px;
+        }
+
+        th:last-child,
+        td:last-child{
+            border-right:none;
+        }
+
+        tbody tr:last-child td{
+            border-bottom:none;
+        }
+
+        th{
+            background:#efefef;
+            font-size:5pt;
+            text-transform:uppercase;
+        }
+
+        td{
+            font-size:6pt;
+        }
+
+        .barcode{
+            width:100%;
+            max-height:42px;
+            object-fit:contain;
+        }
+
+        .qrcode{
+            width:80%;
+            max-height:115px;
+            object-fit:contain;
+            display:block;
+            margin:0 auto;
+        }
+
+        .watermark{
+            position:fixed;
+            inset:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:38pt;
+            color:rgba(0,0,0,.06);
+            transform:rotate(-28deg);
+            z-index:-1;
+            text-transform:uppercase;
+            font-weight:700;
+        }
+
+    </style>
+</head>
+
+<body>
+<% if (watermarkText) { %><div class="watermark"><%= watermarkText %></div><% } %>
+<div class="page">
+
+    <!-- CANHOTO -->
+    <div class="box">
+        <div class="grid line gray" style="grid-template-columns:1fr;">
+            <div class="cell center" style="font-size:5pt;font-weight:700;">
+                DECLARO QUE RECEBI OS VOLUMES DESTE CONHECIMENTO EM PERFEITO ESTADO E DOU POR CUMPRIDO O PRESENTE CONTRATO DE TRANSPORTE
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns:78% 22%; min-height:65px;">
+
+            <div class="cell" style="padding:0;">
+                <div class="grid line" style="grid-template-columns:60% 40%; min-height:64px;">
+
+                    <div class="cell" style="padding:0;">
+                        <div class="grid line"><div class="cell"><div class="label">Nome</div></div></div>
+                        <div class="grid line"><div class="cell"><div class="label">RG</div></div></div>
+                        <div class="grid"><div class="cell"><div class="label">Assinatura / Carimbo</div></div></div>
+                    </div>
+
+                    <div class="cell" style="padding:0;">
+                        <div class="grid line"><div class="cell"><div class="label">Término Prestação</div></div></div>
+                        <div class="grid"><div class="cell"><div class="label">Início Prestação</div></div></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="cell center">
+                <div class="big">CT-e</div>
+                <div class="label">Número</div>
+                <div class="value"><%= dacte.numero %></div>
+
+                <div class="label" style="margin-top:3px;">Série</div>
+                <div class="value"><%= dacte.serie %></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="box">
+        <div class="grid" style="grid-template-columns:42% 40% 18%; min-height:188px;">
+
+            <!-- Emitente -->
+            <div class="cell">
+                <div class="big" style="font-size:9pt;"><%= val(emitente.nome) %></div>
+
+                <div class="small" style="margin-top:5px;">
+                    CNPJ: <%= val(emitente.cpfCnpj) %><br>
+                    IE: <%= val(emitente.ie) %><br><br>
+
+                    <%= val(emitente.endereco) %><br>
+                    <%= val(emitente.municipio) %>/<%= val(emitente.uf) %><br>
+                    CEP: <%= val(emitente.cep) %><br>
+                    Fone: <%= val(emitente.fone) %>
+                </div>
+            </div>
+
+            <!-- Centro -->
+            <div class="cell" style="padding:0;">
+
+                <div class="grid line" style="grid-template-columns:55% 30% 15%; min-height:48px;">
+                    <div class="cell center">
+                        <div class="big">DACTE</div>
+                        <div class="label">Documento Auxiliar do Conhecimento de Transporte Eletrônico</div>
+                    </div>
+
+                    <div class="cell center">
+                        <div class="label">Modal</div>
+                        <div class="value"><%= val(dacte.modal) %></div>
+                    </div>
+
+                    <div class="cell center">
+                        <div class="label">Fl</div>
+                        <div class="value">1/1</div>
+                    </div>
+                </div>
+
+                <div class="grid line gray" style="grid-template-columns:18% 18% 32% 32%; min-height:30px;">
+                    <div class="cell center">
+                        <div class="label">Mod.</div>
+                        <div class="value"><%= val(dacte.modelo,'57') %></div>
+                    </div>
+
+                    <div class="cell center">
+                        <div class="label">Série</div>
+                        <div class="value"><%= dacte.serie %></div>
+                    </div>
+
+                    <div class="cell center">
+                        <div class="label">Número</div>
+                        <div class="value"><%= dacte.numero %></div>
+                    </div>
+
+                    <div class="cell center">
+                        <div class="label">Emissão</div>
+                        <div class="value"><%- String(emissao).replace(/,?\s/, '<br>'); %></div>
+                    </div>
+                </div>
+
+                <div class="grid line">
+                    <div class="cell center">
+                        <img src="<%= barcodeSrc %>" class="barcode">
+                    </div>
+                </div>
+
+                <div class="grid line">
+                    <div class="cell center" style="padding:2px 1px;">
+                        <div class="label">Chave de acesso</div>
+                        <div class="key">
+                            <% chunks(chaveAcesso).forEach((p, i) => { %><span><%= p %><%= i < chunks(chaveAcesso).length - 1 ? ' ' : '' %></span><% }) %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="cell center small">
+                        Consulta em www.cte.fazenda.gov.br ou portal SEFAZ
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- QR -->
+            <div class="cell" style="display:flex;align-items:center;justify-content:center;">
+                <img src="<%= qrCodeSrc %>" class="qrcode">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PROTOCOLO -->
+    <div class="box gray">
+        <div class="cell">
+            <div class="label">Protocolo de autorização de uso</div>
+            <div class="value"><%= val(dacte.protocolo) %> - <%= protocoloData %></div>
+            <% if (headerNote) { %><div class="small" style="margin-top:3px;"><%= headerNote %></div><% } %>
+        </div>
+    </div>
+
+    <!-- DADOS GERAIS -->
+    <div class="box">
+
+        <div class="grid line" style="grid-template-columns:15% 15% 20% 50%;">
+            <div class="cell">
+                <div class="label">Tipo CT-e</div>
+                <div class="value"><%= dacte.tipoCte %></div>
+            </div>
+
+            <div class="cell">
+                <div class="label">Tipo serviço</div>
+                <div class="value"><%= dacte.tipoServico %></div>
+            </div>
+
+            <div class="cell">
+                <div class="label">CT-e Globalizado</div>
+                <div class="value">Não</div>
+            </div>
+
+            <div class="cell">
+                <div class="label">INFORMAÇÕES DO CT-E GLOBALIZADO</div>
+                <div class="value">-</div>
+            </div>
+        </div>
+
+        <div class="grid line">
+            <div class="cell">
+                <div class="label">CFOP / Natureza operação</div>
+                <div class="value"><%= dacte.cfop %> - <%= dacte.naturezaOperacao %></div>
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns:50% 50%;">
+            <div class="cell">
+                <div class="label">INÍCIO DA PRESTAÇÃO</div>
+                <div class="value"><%= val(dacte.origem) %></div>
+            </div>
+
+            <div class="cell">
+                <div class="label">TÉRMINO DA PRESTAÇÃO</div>
+                <div class="value"><%= val(dacte.destino) %></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOMADORES -->
+    <div class="box">
+
+        <div class="grid line" style="grid-template-columns:50% 50%;">
+
+            <div class="cell" style="padding:0;">
+                <div class="title">Remetente</div>
+                <div style="padding:3px;" class="small">
+                    <b><%= val(remetente.nome) %></b><br>
+                    <%= val(remetente.endereco) %><br>
+                    <%= val(remetente.municipio) %>/<%= val(remetente.uf) %><br>
+                    CNPJ/CPF: <%= val(remetente.cpfCnpj) %>
+                </div>
+            </div>
+
+            <div class="cell" style="padding:0;">
+                <div class="title">Destinatário</div>
+                <div style="padding:3px;" class="small">
+                    <b><%= val(destinatario.nome) %></b><br>
+                    <%= val(destinatario.endereco) %><br>
+                    <%= val(destinatario.municipio) %>/<%= val(destinatario.uf) %><br>
+                    CNPJ/CPF: <%= val(destinatario.cpfCnpj) %>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid">
+            <div class="cell" style="padding:0;">
+                <div class="title">Tomador do Serviço</div>
+                <div style="padding:3px;" class="small">
+                    <b><%= val(tomador.nome) %></b> -
+                    <%= val(tomador.cpfCnpj) %> -
+                    <%= val(tomador.municipio) %>/<%= val(tomador.uf) %>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CARGA -->
+    <div class="box">
+        <div class="title">Produto predominante e carga</div>
+
+        <div class="grid line" style="grid-template-columns:40% 40% 20%;">
+            <div class="cell">
+                <div class="label">Produto</div>
+                <div class="value">-</div>
+            </div>
+
+            <div class="cell">
+                <div class="label">Características</div>
+                <div class="value">-</div>
+            </div>
+
+            <div class="cell right">
+                <div class="label">Valor mercadoria</div>
+                <div class="value">-</div>
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns:50% 50%;">
+            <div class="cell">
+                <div class="label">Tipo medida</div>
+                <div class="value"><%= (quantidades[0] || {}).label || 'QUILOGRAMA' %></div>
+            </div>
+
+            <div class="cell right">
+                <div class="label">Quantidade</div>
+                <div class="value"><%= (quantidades[0] || {}).value || '0,00' %></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PRESTAÇÃO -->
+    <div class="box">
+        <div class="title">Componentes do valor da prestação</div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Valor</th>
+                <th>Nome</th>
+                <th>Valor</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><%= (componentes[0] || {}).label || 'Frete Valor' %></td>
+                <td class="right"><%= (componentes[0] || {}).value || '0,00' %></td>
+                <td><%= (componentes[1] || {}).label || 'Pedágio' %></td>
+                <td class="right"><%= (componentes[1] || {}).value || '0,00' %></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="grid gray" style="grid-template-columns:50% 50%;">
+            <div class="cell right">
+                <div class="label">Valor total prestação</div>
+                <div class="value"><%= val(dacte.valorTotalServico, '0,00') %></div>
+            </div>
+
+            <div class="cell right">
+                <div class="label">Valor a receber</div>
+                <div class="value"><%= dacte.valorReceber %></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- IMPOSTOS -->
+    <div class="box">
+        <div class="title">Informações relativas ao imposto</div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>CST</th>
+                <th>Base cálculo</th>
+                <th>Alíq.</th>
+                <th>Valor ICMS</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td><%= findValue(impostos,'CST','90-SIMPLES NACIONAL') %></td>
+                <td class="right"><%= findInfo(impostos,'BASE') %></td>
+                <td class="right"><%= findInfo(impostos,'ALIQ') %></td>
+                <td class="right"><%= findInfo(impostos,'VALOR ICMS') %></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- DOCUMENTOS -->
+    <div class="box">
+        <div class="title">Documentos originários</div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Número</th>
+                <th>Chave</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% documentos.forEach(doc => { %>
+                <tr>
+                    <td><%= doc.tipo || 'NF-e' %></td>
+                    <td><%= doc.numero || '-' %></td>
+                    <td><%= doc.chave || '-' %></td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- OBS -->
+    <div class="box">
+        <div class="title">Observações</div>
+        <div class="cell small" style="min-height:55px;">
+            <% if (observacoes.length) { %>
+                <% observacoes.forEach((obs) => { %>
+                    <div><%= obs %></div>
+                <% }) %>
+            <% } else { %>
+                <div>-</div>
+            <% } %>
+
+        </div>
+    </div>
+
+    <% if (extraInfoEntries.length) { %>
+    <div class="box">
+        <div class="title">Informações complementares</div>
+        <table>
+            <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Valor</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% extraInfoEntries.forEach(([label, value]) => { %>
+                <tr>
+                    <td><%= label %></td>
+                    <td><%= value %></td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <% } %>
+
+    <% customSectionsList.forEach((section) => { %>
+    <div class="box">
+        <div class="title"><%= section.title %></div>
+        <div class="cell small" style="border-right:none;">
+            <% if (section.text) { %><div style="margin-bottom:4px;"><%= section.text %></div><% } %>
+            <% if (section.fields && section.fields.length) { %>
+            <table>
+                <thead>
+                <tr>
+                    <th>Campo</th>
+                    <th>Valor</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% section.fields.forEach((field) => { %>
+                    <tr>
+                        <td><%= field.label %></td>
+                        <td><%= field.value %></td>
+                    </tr>
+                <% }) %>
+                </tbody>
+            </table>
+            <% } %>
+        </div>
+    </div>
+    <% }) %>
+
+    <!-- MODAL -->
+    <div class="box">
+        <div class="title">Informações específicas modal rodoviário</div>
+
+        <div class="grid" style="grid-template-columns:50% 50%;">
+            <div class="cell">
+                <div class="label">RNTRC</div>
+                <div class="value">
+                    <%= (modalInfo.find(m => String(m.label).includes('RNTRC')) || {value:'-' }).value %>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="label">Entrega prevista</div>
+                <div class="value">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL -->
+    <div class="box">
+        <div class="grid" style="grid-template-columns:50% 50%; min-height:40px;">
+            <div class="cell"><div class="label">Uso exclusivo do emissor do CT-e</div></div>
+            <div class="cell"><div class="label">Reservado ao fisco</div></div>
+        </div>
+        <% if (footerNote) { %><div class="cell small" style="border-right:none;"><%= footerNote %></div><% } %>
+    </div>
+
+</div>
+</body>
+</html>

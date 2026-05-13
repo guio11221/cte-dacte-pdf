@@ -1,0 +1,37 @@
+{
+  "name": "cte-dacte-pdf",
+  "version": "1.0.0",
+  "description": "Modulo Node.js para gerar PDF DACTE a partir do XML do CT-e.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx examples/generate-from-xml.ts",
+    "build": "tsc",
+    "start": "node dist/examples/generate-from-xml.js"
+  },
+  "keywords": [
+    "cte",
+    "dacte",
+    "sefaz",
+    "pdf",
+    "xml"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.10",
+    "bwip-js": "^4.5.1",
+    "ejs": "^3.1.10",
+    "fast-xml-parser": "^4.5.0",
+    "puppeteer": "^24.10.2",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.5",
+    "@types/node": "^22.15.18",
+    "@types/qrcode": "^1.5.5",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
