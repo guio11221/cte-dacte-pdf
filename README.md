@@ -60,8 +60,14 @@ try {
 
 ## Exemplos locais
 
-- Exemplo simples: [examples/generate-from-xml.ts](C:/Users/sguii/OneDrive/Documentos/cte-dacte-pdf-module/examples/generate-from-xml.ts)
-- Exemplo completo: [examples/all-scenarios.ts](C:/Users/sguii/OneDrive/Documentos/cte-dacte-pdf-module/examples/all-scenarios.ts)
+- `01-import-generate-from-xml.ts`: gerar PDF a partir de XML usando `import`
+- `02-import-parse-and-render.ts`: parsear antes e renderizar depois
+- `03-import-generate-from-data.ts`: gerar DACTE a partir de dados normalizados
+- `04-import-all-scenarios.ts`: rodar todos os cenarios suportados
+- `05-require-compiled-generate-from-xml.cjs`: consumir o pacote compilado com `require`
+- `06-import-compiled-generate-from-xml.mjs`: consumir o pacote compilado com `import`
+
+Os exemplos `05` e `06` dependem de `npm run build`.
 
 ## Compliance
 

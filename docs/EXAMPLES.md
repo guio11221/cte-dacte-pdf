@@ -1,28 +1,53 @@
 # Exemplos
 
-## Exemplo simples
+## Exemplos por arquivo
 
-Arquivo: [examples/generate-from-xml.ts](C:/Users/sguii/OneDrive/Documentos/cte-dacte-pdf-module/examples/generate-from-xml.ts)
+### `01-import-generate-from-xml.ts`
 
-Esse exemplo:
+Uso direto com `import`, lendo XML e gerando PDF.
 
-- le um XML
-- identifica o tipo automaticamente
-- define um nome de saida coerente
-- gera o PDF
+### `02-import-parse-and-render.ts`
 
-## Exemplo completo
+Mostra o fluxo em duas etapas:
 
-Arquivo: [examples/all-scenarios.ts](C:/Users/sguii/OneDrive/Documentos/cte-dacte-pdf-module/examples/all-scenarios.ts)
+- parse do XML
+- renderizacao a partir do documento normalizado
 
-Esse exemplo cobre:
+### `03-import-generate-from-data.ts`
 
-- DACTE a partir de XML
-- cancelamento a partir de XML de evento
-- CC-e a partir de XML de evento
-- parse do XML antes da renderizacao
-- renderizacao com informacoes extras
-- renderizacao a partir de dados normalizados
+Mostra o fluxo legado e util para DACTE:
+
+- parse de CT-e com `parseCteXml()`
+- renderizacao via `generateFromData()`
+
+### `04-import-all-scenarios.ts`
+
+Cobre:
+
+- DACTE por XML
+- cancelamento por XML de evento
+- CC-e por XML de evento
+- DACTE por dados normalizados
+
+### `05-require-compiled-generate-from-xml.cjs`
+
+Exemplo para consumidor CommonJS usando `require`.
+
+Esse exemplo depende de build concluido:
+
+```bash
+npm run build
+node examples/05-require-compiled-generate-from-xml.cjs
+```
+
+### `06-import-compiled-generate-from-xml.mjs`
+
+Exemplo para consumidor ESM usando o artefato compilado.
+
+```bash
+npm run build
+node examples/06-import-compiled-generate-from-xml.mjs
+```
 
 ## Estrutura recomendada de exemplos locais
 
@@ -31,14 +56,18 @@ examples/
   cte.xml
   evento-cancelamento.xml
   evento-cce.xml
-  generate-from-xml.ts
-  all-scenarios.ts
+  01-import-generate-from-xml.ts
+  02-import-parse-and-render.ts
+  03-import-generate-from-data.ts
+  04-import-all-scenarios.ts
+  05-require-compiled-generate-from-xml.cjs
+  06-import-compiled-generate-from-xml.mjs
 ```
 
 ## Comando recomendado
 
 ```bash
-npx tsx examples/all-scenarios.ts
+npx tsx examples/04-import-all-scenarios.ts
 ```
 
 ## Observacao
