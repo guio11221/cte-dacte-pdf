@@ -81,14 +81,15 @@ Opcoes principais:
 
 ## Exemplos locais
 
-- `01-import-generate-from-xml.ts`: gerar PDF a partir de XML usando `import`
-- `02-import-parse-and-render.ts`: parsear antes e renderizar depois
-- `03-import-generate-from-data.ts`: gerar DACTE a partir de dados normalizados
-- `04-import-all-scenarios.ts`: rodar todos os cenarios suportados
-- `05-require-compiled-generate-from-xml.cjs`: consumir o pacote compilado com `require`
-- `06-import-compiled-generate-from-xml.mjs`: consumir o pacote compilado com `import`
+- `01-generate-from-xml.js`: gerar PDF direto do XML
+- `02-parse-document.js`: parsear e inspecionar o documento
+- `03-generate-from-data.js`: gerar DACTE a partir de dados normalizados
+- `04-custom-options.js`: customizar o PDF
+- `05-cli.js`: chamar o bin `cte-pdf`
+- `06-import-compiled.js`: consumir o build compilado com `import`
+- `07-require-compiled.cjs`: consumir o build compilado com `require`
 
-Os exemplos `05` e `06` dependem de `npm run build`.
+Os exemplos `05`, `06` e `07` dependem de `npm run build`.
 
 ## Compliance
 

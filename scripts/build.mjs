@@ -36,7 +36,13 @@ async function copyStaticExamples(targetRoot) {
   await ensureDir(targetDir);
 
   for (const fileName of await fs.readdir(sourceDir)) {
-    if (!fileName.endsWith('.cjs') && !fileName.endsWith('.mjs') && !fileName.endsWith('.xml')) {
+    if (
+      !fileName.endsWith('.js') &&
+      !fileName.endsWith('.cjs') &&
+      !fileName.endsWith('.mjs') &&
+      !fileName.endsWith('.md') &&
+      !fileName.endsWith('.xml')
+    ) {
       continue;
     }
     await fs.copyFile(path.join(sourceDir, fileName), path.join(targetDir, fileName));

@@ -1,75 +1,80 @@
 # Exemplos
 
-## Exemplos por arquivo
+Os exemplos ficam na pasta [examples](C:/Users/sguii/OneDrive/Documentos/cte-dacte-pdf-module/examples).
 
-### `01-import-generate-from-xml.ts`
+A ideia e simples: cada arquivo mostra uma funcionalidade.
 
-Uso direto com `import`, lendo XML e gerando PDF.
+## Arquivos
 
-### `02-import-parse-and-render.ts`
+### `01-generate-from-xml.js`
 
-Mostra o fluxo em duas etapas:
+Gera PDF direto do XML.
 
-- parse do XML
-- renderizacao a partir do documento normalizado
+```bash
+node examples/01-generate-from-xml.js ./cte.xml
+```
 
-### `03-import-generate-from-data.ts`
+### `02-parse-document.js`
 
-Mostra o fluxo legado e util para DACTE:
+Parseia o XML e imprime o documento normalizado.
 
-- parse de CT-e com `parseCteXml()`
-- renderizacao via `generateFromData()`
+```bash
+node examples/02-parse-document.js ./cte.xml
+```
 
-### `04-import-all-scenarios.ts`
+### `03-generate-from-data.js`
 
-Cobre:
+Mostra o fluxo `parseCteXml()` + `generateFromData()`.
 
-- DACTE por XML
-- cancelamento por XML de evento
-- CC-e por XML de evento
-- DACTE por dados normalizados
+```bash
+node examples/03-generate-from-data.js ./cte.xml
+```
 
-### `05-require-compiled-generate-from-xml.cjs`
+### `04-custom-options.js`
 
-Exemplo para consumidor CommonJS usando `require`.
+Mostra `headerNote`, `footerNote`, `watermarkText` e `additionalInfo`.
 
-Esse exemplo depende de build concluido:
+```bash
+node examples/04-custom-options.js ./cte.xml
+```
+
+### `05-cli.js`
+
+Mostra o uso do bin `cte-pdf`.
 
 ```bash
 npm run build
-node examples/05-require-compiled-generate-from-xml.cjs
+node examples/05-cli.js ./cte.xml
 ```
 
-### `06-import-compiled-generate-from-xml.mjs`
+### `06-import-compiled.js`
 
-Exemplo para consumidor ESM usando o artefato compilado.
+Consome o build compilado com `import`.
 
 ```bash
 npm run build
-node examples/06-import-compiled-generate-from-xml.mjs
+node examples/06-import-compiled.js ./cte.xml
 ```
 
-## Estrutura recomendada de exemplos locais
+### `07-require-compiled.cjs`
+
+Consome o build compilado com `require`.
+
+```bash
+npm run build
+node examples/07-require-compiled.cjs ./cte.xml
+```
+
+## Estrutura
 
 ```text
 examples/
-  cte.xml
-  evento-cancelamento.xml
-  evento-cce.xml
-  01-import-generate-from-xml.ts
-  02-import-parse-and-render.ts
-  03-import-generate-from-data.ts
-  04-import-all-scenarios.ts
-  05-require-compiled-generate-from-xml.cjs
-  06-import-compiled-generate-from-xml.mjs
+  README.md
+  01-generate-from-xml.js
+  02-parse-document.js
+  03-generate-from-data.js
+  04-custom-options.js
+  05-cli.js
+  06-import-compiled.js
+  07-require-compiled.cjs
 ```
-
-## Comando recomendado
-
-```bash
-npx tsx examples/04-import-all-scenarios.ts
-```
-
-## Observacao
-
-Se os XMLs de evento ainda nao estiverem presentes, o exemplo completo pula apenas os cenarios faltantes e segue com os demais.
