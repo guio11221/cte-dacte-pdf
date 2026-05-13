@@ -64,11 +64,22 @@ Notas visuais:
 cte-pdf ./cte.xml --header-note "Gerado pelo ERP" --watermark "USO INTERNO"
 ```
 
+Outras opcoes uteis:
+
+```bash
+cte-pdf ./cte.xml --out-dir ./pdfs
+cte-pdf ./cte.xml --logo ./logo.png
+cte-pdf ./cte.xml --json-info ./info-extra.json
+cte-pdf ./cte.xml --validate-only
+```
+
 Comportamento:
 
 - sem flag, o CLI detecta automaticamente o tipo do XML
 - com flag, o CLI valida se o XML bate com o tipo esperado
 - se houver divergencia, o comando falha com mensagem clara
+- `--validate-only` valida sem gerar PDF
+- `--quiet` reduz a saida de console
 
 ## Gerar PDF e salvar automaticamente
 

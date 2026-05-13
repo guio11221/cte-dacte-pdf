@@ -35,6 +35,14 @@ const document = parseCteDocumentXml(xml);
 const pdf = await service.generateDocumentFromData(document, options);
 ```
 
+#### `renderDocumentHtml(document, options?)`
+
+Renderiza o HTML final sem gerar PDF.
+
+```ts
+const html = await service.renderDocumentHtml(document, options);
+```
+
 #### `close()`
 
 Fecha a instancia interna do browser.
@@ -61,6 +69,22 @@ Faz parse de um XML de evento de CT-e suportado e retorna `CteEventData`.
 
 Detecta o tipo do XML e retorna `CteDocumentData`.
 
+### `validateXmlString(xml)`
+
+Valida se o XML e bem formado.
+
+### `validateParsedCte(raw)`
+
+Valida estruturalmente um CT-e parseado.
+
+### `validateParsedCteEvent(raw)`
+
+Valida estruturalmente um evento parseado.
+
+### `validateParsedCteDocument(raw)`
+
+Valida estruturalmente um documento parseado com selecao automatica.
+
 ## Tipos principais
 
 ### `DocumentKind`
@@ -76,6 +100,7 @@ type GenerateDacteOptions = {
   outputPath?: string;
   templatePath?: string;
   logoBase64?: string;
+  logoPath?: string;
   headerNote?: string;
   footerNote?: string;
   watermarkText?: string;
@@ -118,10 +143,14 @@ Campos relevantes:
 - `chaveAcesso`
 - `protocolo`
 - `protocoloData`
+- `tipoServico`
 - `emitente`
 - `remetente`
 - `destinatario`
 - `tomador`
+- `produtoPredominante`
+- `outrasCaracteristicas`
+- `valorCarga`
 - `valorTotalServico`
 - `valorReceber`
 - `componentesPrestacao`

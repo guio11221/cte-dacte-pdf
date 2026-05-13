@@ -58,9 +58,15 @@ Opcoes principais:
 - `--cancelado`
 - `--cce`
 - `-o, --output`
+- `--out-dir`
+- `--template`
+- `--logo`
+- `--json-info`
 - `--header-note`
 - `--footer-note`
 - `--watermark`
+- `--validate-only`
+- `--quiet`
 
 ## Customizacao suportada
 

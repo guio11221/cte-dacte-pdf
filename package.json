@@ -6,6 +6,11 @@
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/src/index.js",
   "types": "./dist/types/src/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "docs"
+  ],
   "bin": {
     "cte-pdf": "./dist/bin/cte-pdf.mjs"
   },
@@ -18,7 +23,8 @@
     }
   },
   "scripts": {
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test test/parser-and-cli.test.mjs"
   },
   "keywords": [
     "cte",

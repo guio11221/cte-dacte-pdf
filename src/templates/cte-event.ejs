@@ -154,6 +154,11 @@ const eventTitle = document.kind === 'cancelamento'
   <div class="box">
     <div class="title"><%= eventTitle %></div>
     <div class="box-body">
+      <% if (logoBase64) { %>
+        <div class="center" style="margin-bottom: 2mm;">
+          <img src="<%= logoBase64 %>" style="max-width:60mm;max-height:20mm;object-fit:contain;">
+        </div>
+      <% } %>
       <div class="subtitle">
         Documento auxiliar para conferência interna do evento registrado na SEFAZ vinculado ao CT-e.
       </div>

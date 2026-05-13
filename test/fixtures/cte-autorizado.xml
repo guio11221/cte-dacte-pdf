@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cteProc>
+  <CTe>
+    <infCte Id="CTe35240512345678000123570010000012341000012345">
+      <ide>
+        <mod>57</mod>
+        <serie>1</serie>
+        <nCT>1234</nCT>
+        <dhEmi>2026-05-13T10:30:00-03:00</dhEmi>
+        <CFOP>6352</CFOP>
+        <natOp>PRESTACAO DE SERVICO DE TRANSPORTE</natOp>
+        <tpCTe>0</tpCTe>
+        <tpServ>0</tpServ>
+        <modal>01</modal>
+        <tpAmb>1</tpAmb>
+        <tpEmis>1</tpEmis>
+        <xMunIni>CUIABA</xMunIni>
+        <UFIni>MT</UFIni>
+        <xMunFim>RONDONOPOLIS</xMunFim>
+        <UFFim>MT</UFFim>
+        <toma3>
+          <toma>0</toma>
+        </toma3>
+      </ide>
+      <emit>
+        <CNPJ>12345678000123</CNPJ>
+        <xNome>TRANSPORTADORA MODELO LTDA</xNome>
+        <IE>123456789</IE>
+        <enderEmit>
+          <xLgr>RUA UM</xLgr>
+          <nro>100</nro>
+          <xBairro>CENTRO</xBairro>
+          <xMun>CUIABA</xMun>
+          <CEP>78000000</CEP>
+          <UF>MT</UF>
+          <fone>6533334444</fone>
+        </enderEmit>
+      </emit>
+      <rem>
+        <CNPJ>22222222000122</CNPJ>
+        <xNome>REMETENTE TESTE</xNome>
+        <IE>1111</IE>
+        <enderReme>
+          <xLgr>AV REMETENTE</xLgr>
+          <nro>10</nro>
+          <xMun>CUIABA</xMun>
+          <UF>MT</UF>
+        </enderReme>
+      </rem>
+      <dest>
+        <CNPJ>33333333000133</CNPJ>
+        <xNome>DESTINATARIO TESTE</xNome>
+        <IE>2222</IE>
+        <enderDest>
+          <xLgr>AV DESTINO</xLgr>
+          <nro>20</nro>
+          <xMun>RONDONOPOLIS</xMun>
+          <UF>MT</UF>
+        </enderDest>
+      </dest>
+      <vPrest>
+        <vTPrest>1500.50</vTPrest>
+        <vRec>1500.50</vRec>
+        <Comp>
+          <xNome>Frete Valor</xNome>
+          <vComp>1400.50</vComp>
+        </Comp>
+        <Comp>
+          <xNome>Pedagio</xNome>
+          <vComp>100.00</vComp>
+        </Comp>
+      </vPrest>
+      <imp>
+        <ICMS>
+          <ICMS00>
+            <CST>00</CST>
+            <vBC>1500.50</vBC>
+            <pICMS>12.00</pICMS>
+            <vICMS>180.06</vICMS>
+          </ICMS00>
+        </ICMS>
+        <vTotTrib>200.00</vTotTrib>
+      </imp>
+      <compl>
+        <xObs>OBSERVACAO EXEMPLO</xObs>
+      </compl>
+      <infCTeNorm>
+        <infCarga>
+          <proPred>ALIMENTOS</proPred>
+          <xOutCat>REFRIGERADO</xOutCat>
+          <vCarga>35000.90</vCarga>
+          <infQ>
+            <cUnid>01</cUnid>
+            <tpMed>KG</tpMed>
+            <qCarga>1200.50</qCarga>
+          </infQ>
+        </infCarga>
+        <infDoc>
+          <infNFe>
+            <chave>35240511111111111111550010000000011000000010</chave>
+          </infNFe>
+        </infDoc>
+        <infModal>
+          <rodo>
+            <RNTRC>12345678</RNTRC>
+            <dPrev>2026-05-14</dPrev>
+            <lota>1</lota>
+          </rodo>
+        </infModal>
+      </infCTeNorm>
+      <infCTeSupl>
+        <qrCodCTe>https://www.cte.fazenda.gov.br/portal/consulta.aspx?chCTe=35240512345678000123570010000012341000012345</qrCodCTe>
+        <urlChave>https://www.cte.fazenda.gov.br/portal/consulta.aspx</urlChave>
+      </infCTeSupl>
+    </infCte>
+  </CTe>
+  <protCTe>
+    <infProt>
+      <chCTe>35240512345678000123570010000012341000012345</chCTe>
+      <nProt>135260000000001</nProt>
+      <dhRecbto>2026-05-13T10:31:00-03:00</dhRecbto>
+      <cStat>100</cStat>
+      <xMotivo>Autorizado o uso do CT-e</xMotivo>
+    </infProt>
+  </protCTe>
+</cteProc>

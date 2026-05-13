@@ -29,26 +29,7 @@ export class DactePdfService {
   }
 
   async generateDocumentFromData(document: CteDocumentData, options: GenerateDacteOptions = {}): Promise<Buffer> {
-    const templatePath = options.templatePath ?? this.resolveTemplatePath(document.kind);
-    const normalizedDocument = this.applyPartyOverrides(document, options);
-    const [barcodeDataUrl, qrCodeDataUrl] = await Promise.all([
-      createCode128DataUrl(normalizedDocument.chaveAcesso),
-      createQrCodeDataUrl(this.resolveQrValue(normalizedDocument))
-    ]);
-
-    const html = await ejs.renderFile(templatePath, {
-      document: normalizedDocument,
-      dacte: normalizedDocument.kind === 'dacte' ? normalizedDocument : undefined,
-      barcodeDataUrl,
-      qrCodeDataUrl,
-      chaveFormatada: formatAccessKey(normalizedDocument.chaveAcesso),
-      logoBase64: options.logoBase64 ?? '',
-      headerNote: options.headerNote ?? '',
-      footerNote: options.footerNote ?? '',
-      watermarkText: options.watermarkText ?? '',
-      additionalInfo: options.additionalInfo ?? {},
-      customSections: options.customSections ?? []
-    }, { async: true });
+    const html = await this.renderDocumentHtml(document, options);
 
     const browser = await this.getBrowser();
     const page = await browser.newPage();
@@ -79,6 +60,30 @@ export class DactePdfService {
     this.browserPromise = null;
   }
 
+  async renderDocumentHtml(document: CteDocumentData, options: GenerateDacteOptions = {}): Promise<string> {
+    const templatePath = options.templatePath ?? this.resolveTemplatePath(document.kind);
+    const normalizedDocument = this.applyPartyOverrides(document, options);
+    const logoBase64 = options.logoBase64 || await this.readLogoAsDataUrl(options.logoPath);
+    const [barcodeDataUrl, qrCodeDataUrl] = await Promise.all([
+      createCode128DataUrl(normalizedDocument.chaveAcesso),
+      createQrCodeDataUrl(this.resolveQrValue(normalizedDocument))
+    ]);
+
+    return ejs.renderFile(templatePath, {
+      document: normalizedDocument,
+      dacte: normalizedDocument.kind === 'dacte' ? normalizedDocument : undefined,
+      barcodeDataUrl,
+      qrCodeDataUrl,
+      chaveFormatada: formatAccessKey(normalizedDocument.chaveAcesso),
+      logoBase64,
+      headerNote: options.headerNote ?? '',
+      footerNote: options.footerNote ?? '',
+      watermarkText: options.watermarkText ?? '',
+      additionalInfo: options.additionalInfo ?? {},
+      customSections: options.customSections ?? []
+    }, { async: true });
+  }
+
   private getBrowser(): Promise<Browser> {
     this.browserPromise ??= puppeteer.launch({
       headless: true,
@@ -97,6 +102,21 @@ export class DactePdfService {
       return document.qrCodeUrl || document.consultaUrl || document.chaveAcesso;
     }
     return document.chaveAcesso;
+  }
+
+  private async readLogoAsDataUrl(logoPath?: string): Promise<string> {
+    if (!logoPath) return '';
+
+    const filePath = path.resolve(logoPath);
+    const bytes = await fs.readFile(filePath);
+    const extension = path.extname(filePath).toLowerCase();
+    const mimeType = extension === '.jpg' || extension === '.jpeg'
+      ? 'image/jpeg'
+      : extension === '.svg'
+        ? 'image/svg+xml'
+        : 'image/png';
+
+    return `data:${mimeType};base64,${bytes.toString('base64')}`;
   }
 
   private applyPartyOverrides(document: CteDocumentData, options: GenerateDacteOptions): CteDocumentData {

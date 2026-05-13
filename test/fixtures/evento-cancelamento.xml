@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<procEventoCTe>
+  <eventoCTe>
+    <infEvento>
+      <CNPJ>12345678000123</CNPJ>
+      <chCTe>35240512345678000123570010000012341000012345</chCTe>
+      <tpAmb>1</tpAmb>
+      <tpEvento>110111</tpEvento>
+      <nSeqEvento>1</nSeqEvento>
+      <dhEvento>2026-05-13T11:00:00-03:00</dhEvento>
+      <detEvento>
+        <descEvento>Cancelamento</descEvento>
+        <nProt>135260000000001</nProt>
+        <xJust>EMISSAO INDEVIDA</xJust>
+      </detEvento>
+    </infEvento>
+  </eventoCTe>
+  <retEventoCTe>
+    <infEvento>
+      <cStat>135</cStat>
+      <xMotivo>Evento registrado e vinculado a CT-e</xMotivo>
+      <nProt>235260000000001</nProt>
+      <dhRegEvento>2026-05-13T11:01:00-03:00</dhRegEvento>
+    </infEvento>
+  </retEventoCTe>
+</procEventoCTe>

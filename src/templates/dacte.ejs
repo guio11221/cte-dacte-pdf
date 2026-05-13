@@ -251,6 +251,7 @@ const findInfo = (items, label) =>
 
             <!-- Emitente -->
             <div class="cell">
+                <% if (logoBase64) { %><img src="<%= logoBase64 %>" style="max-width:60mm;max-height:26mm;display:block;margin-bottom:4px;"><% } %>
                 <div class="big" style="font-size:9pt;"><%= val(emitente.nome) %></div>
 
                 <div class="small" style="margin-top:5px;">
@@ -439,17 +440,17 @@ const findInfo = (items, label) =>
         <div class="grid line" style="grid-template-columns:40% 40% 20%;">
             <div class="cell">
                 <div class="label">Produto</div>
-                <div class="value">-</div>
+                <div class="value"><%= val(dacte.produtoPredominante) %></div>
             </div>
 
             <div class="cell">
                 <div class="label">Características</div>
-                <div class="value">-</div>
+                <div class="value"><%= val(dacte.outrasCaracteristicas) %></div>
             </div>
 
             <div class="cell right">
                 <div class="label">Valor mercadoria</div>
-                <div class="value">-</div>
+                <div class="value"><%= val(dacte.valorCarga) %></div>
             </div>
         </div>
 

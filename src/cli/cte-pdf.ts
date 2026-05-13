@@ -9,8 +9,11 @@ type CliArgs = {
   mode: CliMode;
   xmlPath?: string;
   outputPath?: string;
+  outDir?: string;
   options: GenerateDacteOptions;
   help: boolean;
+  validateOnly: boolean;
+  quiet: boolean;
 };
 
 function printHelp(): void {
@@ -27,9 +30,15 @@ Opcoes:
   --cancelado          Forca evento de cancelamento
   --cce                Forca Carta de Correcao Eletronica
   -o, --output <pdf>   Caminho de saida do PDF
+  --out-dir <dir>      Diretorio de saida
+  --template <ejs>     Template EJS customizado
+  --logo <img>         Caminho da logo
+  --json-info <json>   Arquivo JSON para additionalInfo
   --header-note <txt>  Observacao no topo
   --footer-note <txt>  Observacao no final
   --watermark <txt>    Marca d'agua textual
+  --validate-only      Apenas valida o XML e o tipo
+  --quiet              Reduz saida no terminal
   -h, --help           Exibe esta ajuda
 
 Exemplos:
@@ -52,7 +61,9 @@ function parseArgs(argv: string[]): CliArgs {
   const result: CliArgs = {
     mode: 'auto',
     options: {},
-    help: false
+    help: false,
+    validateOnly: false,
+    quiet: false
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -84,9 +95,46 @@ function parseArgs(argv: string[]): CliArgs {
       continue;
     }
 
+    if (arg === '--out-dir') {
+      result.outDir = readValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--template') {
+      result.options.templatePath = readValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--logo') {
+      result.options.logoPath = readValue(argv, index, arg);
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--json-info') {
+      result.options.additionalInfo = {
+        ...(result.options.additionalInfo ?? {}),
+        __jsonFilePath: readValue(argv, index, arg)
+      };
+      index += 1;
+      continue;
+    }
+
     if (arg === '--header-note') {
       result.options.headerNote = readValue(argv, index, arg);
       index += 1;
+      continue;
+    }
+
+    if (arg === '--validate-only') {
+      result.validateOnly = true;
+      continue;
+    }
+
+    if (arg === '--quiet') {
+      result.quiet = true;
       continue;
     }
 
@@ -130,6 +178,15 @@ function resolveOutputPath(xmlPath: string, outputPath: string | undefined, kind
   return path.join(parsed.dir, `${parsed.name}-${suffix}.pdf`);
 }
 
+function resolveOutputPathWithDir(xmlPath: string, outputPath: string | undefined, outDir: string | undefined, kind: DocumentKind): string {
+  if (outputPath) return path.resolve(outputPath);
+  if (!outDir) return resolveOutputPath(xmlPath, outputPath, kind);
+
+  const parsed = path.parse(xmlPath);
+  const suffix = kind === 'dacte' ? 'autorizado' : kind === 'cancelamento' ? 'cancelado' : 'cce';
+  return path.resolve(outDir, `${parsed.name}-${suffix}.pdf`);
+}
+
 function validateMode(forcedMode: CliMode, detectedKind: DocumentKind): void {
   if (forcedMode === 'auto') return;
   if (forcedMode === detectedKind) return;
@@ -138,6 +195,23 @@ function validateMode(forcedMode: CliMode, detectedKind: DocumentKind): void {
     `Modo ${forcedMode} informado, mas o XML foi identificado como ${detectedKind}. ` +
     `Use o XML correto ou remova a flag para deteccao automatica.`
   );
+}
+
+async function resolveAdditionalInfo(options: GenerateDacteOptions): Promise<GenerateDacteOptions> {
+  const filePath = options.additionalInfo?.__jsonFilePath;
+  if (!filePath) return options;
+
+  const raw = await fs.readFile(path.resolve(filePath), 'utf8');
+  const parsed = JSON.parse(raw) as Record<string, string>;
+  const { __jsonFilePath, ...rest } = options.additionalInfo ?? {};
+
+  return {
+    ...options,
+    additionalInfo: {
+      ...parsed,
+      ...rest
+    }
+  };
 }
 
 export async function runCli(argv = process.argv.slice(2)): Promise<void> {
@@ -157,18 +231,28 @@ export async function runCli(argv = process.argv.slice(2)): Promise<void> {
 
   validateMode(args.mode, document.kind);
 
-  const outputPath = resolveOutputPath(xmlPath, args.outputPath, document.kind);
+  const outputPath = resolveOutputPathWithDir(xmlPath, args.outputPath, args.outDir, document.kind);
+  const resolvedOptions = await resolveAdditionalInfo(args.options);
+
+  if (args.validateOnly) {
+    if (!args.quiet) {
+      console.log(`Tipo identificado: ${kindLabel(document.kind)}`);
+      console.log('XML valido.');
+    }
+    return;
+  }
+
   const service = new CtePdfService();
 
   try {
-    const pdf = await service.generateDocumentFromData(document, {
-      ...args.options,
+    await service.generateDocumentFromData(document, {
+      ...resolvedOptions,
       outputPath
     });
-
-    await fs.writeFile(outputPath, pdf);
-    console.log(`Tipo identificado: ${kindLabel(document.kind)}`);
-    console.log(`PDF gerado em: ${outputPath}`);
+    if (!args.quiet) {
+      console.log(`Tipo identificado: ${kindLabel(document.kind)}`);
+      console.log(`PDF gerado em: ${outputPath}`);
+    }
   } finally {
     await service.close();
   }

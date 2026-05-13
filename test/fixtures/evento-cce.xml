@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<procEventoCTe>
+  <eventoCTe>
+    <infEvento>
+      <CNPJ>12345678000123</CNPJ>
+      <chCTe>35240512345678000123570010000012341000012345</chCTe>
+      <tpAmb>1</tpAmb>
+      <tpEvento>110110</tpEvento>
+      <nSeqEvento>1</nSeqEvento>
+      <dhEvento>2026-05-13T12:00:00-03:00</dhEvento>
+      <detEvento>
+        <descEvento>Carta de Correcao</descEvento>
+        <xCorrecao>CORRIGIR INFORMACAO COMPLEMENTAR DO TRANSPORTE</xCorrecao>
+        <xCondUso>A Carta de Correcao e disciplinada pelo paragrafo 1o-A do art. 7o do Convenio S/N, de 15 de dezembro de 1970.</xCondUso>
+      </detEvento>
+    </infEvento>
+  </eventoCTe>
+  <retEventoCTe>
+    <infEvento>
+      <cStat>135</cStat>
+      <xMotivo>Evento registrado e vinculado a CT-e</xMotivo>
+      <nProt>235260000000002</nProt>
+      <dhRegEvento>2026-05-13T12:01:00-03:00</dhRegEvento>
+      <xEvento>Carta de Correcao</xEvento>
+    </infEvento>
+  </retEventoCTe>
+</procEventoCTe>

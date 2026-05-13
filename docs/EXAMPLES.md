@@ -4,6 +4,12 @@ Os exemplos ficam na pasta [examples](C:/Users/sguii/OneDrive/Documentos/cte-dac
 
 A ideia e simples: cada arquivo mostra uma funcionalidade.
 
+Antes de rodar:
+
+```bash
+npm run build
+```
+
 ## Arquivos
 
 ### `01-generate-from-xml.js`

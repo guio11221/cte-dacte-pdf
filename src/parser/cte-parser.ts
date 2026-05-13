@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import type { CteDocumentData, CteEventData, DacteData, DacteDocument, DacteItem, DacteParty } from '../types/dacte.types.js';
+import { assertValidation, validateParsedCte, validateParsedCteDocument, validateParsedCteEvent, validateXmlString } from './cte-xml-validator.js';
 import { arr, firstText, onlyDigits } from '../utils/object.js';
 import { formatCep, formatCpfCnpj, formatDateTime, formatMoney } from '../utils/format.js';
 
@@ -87,6 +88,17 @@ function getModal(value: string): string {
   return map[value] ?? value;
 }
 
+function getTipoServico(value: string): string {
+  const map: Record<string, string> = {
+    '0': 'Normal',
+    '1': 'Subcontratacao',
+    '2': 'Redespacho',
+    '3': 'Redespacho Intermediario',
+    '4': 'Servico Vinculado a Multimodal'
+  };
+  return map[value] ?? value;
+}
+
 function getAmbiente(value: string): string {
   if (value === '1') return 'Producao';
   if (value === '2') return 'Homologacao';
@@ -128,6 +140,14 @@ function parseQuantidades(infCarga: any): DacteItem[] {
     label: [firstText(item.cUnid), firstText(item.tpMed)].filter(Boolean).join(' - '),
     value: firstText(item.qCarga)?.replace('.', ',')
   }));
+}
+
+function parseCargaInfo(infCarga: any): Pick<DacteData, 'produtoPredominante' | 'outrasCaracteristicas' | 'valorCarga'> {
+  return {
+    produtoPredominante: firstText(infCarga?.proPred, '-'),
+    outrasCaracteristicas: firstText(infCarga?.xOutCat, '-'),
+    valorCarga: firstText(infCarga?.vCarga) ? formatMoney(infCarga?.vCarga) : '-'
+  };
 }
 
 function parseDocuments(infCteNorm: any): DacteDocument[] {
@@ -200,7 +220,13 @@ function parseEventEmitente(infEvento: any): Partial<DacteParty> {
 }
 
 export function parseCteXml(xml: string): DacteData {
+  const xmlIssues = validateXmlString(xml);
+  if (xmlIssues.length) {
+    throw new Error(xmlIssues.map((item) => `${item.path}: ${item.message}`).join(' | '));
+  }
+
   const raw = parser.parse(xml);
+  assertValidation(validateParsedCte(raw));
   const { infCte, prot } = normalizeCteRoot(raw);
 
   if (!infCte) {
@@ -210,6 +236,7 @@ export function parseCteXml(xml: string): DacteData {
   const ide = infCte.ide ?? {};
   const infCteNorm = infCte.infCTeNorm ?? {};
   const infCarga = infCteNorm.infCarga ?? {};
+  const cargaInfo = parseCargaInfo(infCarga);
   const chaveAcesso = onlyDigits(firstText(infCte['@_Id'])).replace(/^57|^CTe/i, '') || onlyDigits(firstText(prot.chCTe));
   const emitente = readParty(infCte.emit);
 
@@ -226,6 +253,7 @@ export function parseCteXml(xml: string): DacteData {
     cfop: firstText(ide.CFOP),
     naturezaOperacao: firstText(ide.natOp),
     tipoCte: getTipoCte(firstText(ide.tpCTe)),
+    tipoServico: getTipoServico(firstText(ide.tpServ)),
     modal: getModal(firstText(ide.modal)),
     chaveAcesso,
     protocolo: firstText(prot.nProt),
@@ -244,6 +272,9 @@ export function parseCteXml(xml: string): DacteData {
     tomador: getTomador(infCte),
     origem: [firstText(ide.xMunIni), firstText(ide.UFIni)].filter(Boolean).join(' / '),
     destino: [firstText(ide.xMunFim), firstText(ide.UFFim)].filter(Boolean).join(' / '),
+    produtoPredominante: cargaInfo.produtoPredominante,
+    outrasCaracteristicas: cargaInfo.outrasCaracteristicas,
+    valorCarga: cargaInfo.valorCarga,
     valorTotalServico: formatMoney(infCte.vPrest?.vTPrest),
     valorReceber: formatMoney(infCte.vPrest?.vRec),
     componentesPrestacao: parseComponentes(infCte.vPrest),
@@ -256,7 +287,13 @@ export function parseCteXml(xml: string): DacteData {
 }
 
 export function parseCteEventXml(xml: string): CteEventData {
+  const xmlIssues = validateXmlString(xml);
+  if (xmlIssues.length) {
+    throw new Error(xmlIssues.map((item) => `${item.path}: ${item.message}`).join(' | '));
+  }
+
   const raw = parser.parse(xml);
+  assertValidation(validateParsedCteEvent(raw));
   const { infEvento, infRetEvento, detEvento } = normalizeEventRoot(raw);
 
   if (!infEvento || !detEvento) {
@@ -299,7 +336,13 @@ export function parseCteEventXml(xml: string): CteEventData {
 }
 
 export function parseCteDocumentXml(xml: string): CteDocumentData {
+  const xmlIssues = validateXmlString(xml);
+  if (xmlIssues.length) {
+    throw new Error(xmlIssues.map((item) => `${item.path}: ${item.message}`).join(' | '));
+  }
+
   const raw = parser.parse(xml);
+  assertValidation(validateParsedCteDocument(raw));
   if (raw?.cteProc || raw?.CTe || raw?.cte) {
     return parseCteXml(xml);
   }

@@ -65,6 +65,7 @@ export type DacteData = {
   cfop: string;
   naturezaOperacao: string;
   tipoCte: string;
+  tipoServico: string;
   modal: string;
   chaveAcesso: string;
   protocolo: string;
@@ -83,6 +84,9 @@ export type DacteData = {
   tomador?: DacteParty;
   origem: string;
   destino: string;
+  produtoPredominante: string;
+  outrasCaracteristicas: string;
+  valorCarga: string;
   valorTotalServico: string;
   valorReceber: string;
   componentesPrestacao: DacteItem[];
@@ -121,4 +125,5 @@ export type GenerateDacteOptions = RenderCustomization & {
   outputPath?: string;
   templatePath?: string;
   logoBase64?: string;
+  logoPath?: string;
 };
