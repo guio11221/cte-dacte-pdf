@@ -61,6 +61,15 @@ async function writeCjsEntry() {
   );
 }
 
+async function writeBinEntry() {
+  const targetDir = path.join(rootDir, 'dist', 'bin');
+  await ensureDir(targetDir);
+  await fs.writeFile(
+    path.join(targetDir, 'cte-pdf.mjs'),
+    "#!/usr/bin/env node\nimport { main } from '../esm/src/cli/cte-pdf.js';\nawait main();\n"
+  );
+}
+
 async function main() {
   await fs.rm(path.join(rootDir, 'dist'), { recursive: true, force: true });
 
@@ -71,6 +80,7 @@ async function main() {
   await copyStaticExamples('dist/esm');
   await copyStaticExamples('dist/cjs');
   await writeCjsEntry();
+  await writeBinEntry();
   await writePackageJson('dist/esm', 'module');
   await writePackageJson('dist/cjs', 'commonjs');
 }

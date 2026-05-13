@@ -41,6 +41,27 @@ try {
 - gera PDF a partir do XML bruto ou de dados normalizados
 - aceita complementos visuais e operacionais sem alterar o XML fiscal
 
+## CLI
+
+Depois do build, o pacote expõe o bin `cte-pdf`.
+
+```bash
+cte-pdf ./cte.xml
+cte-pdf --autorizado ./cte.xml
+cte-pdf --cancelado ./evento-cancelamento.xml
+cte-pdf --cce ./evento-cce.xml
+```
+
+Opcoes principais:
+
+- `--autorizado`
+- `--cancelado`
+- `--cce`
+- `-o, --output`
+- `--header-note`
+- `--footer-note`
+- `--watermark`
+
 ## Customizacao suportada
 
 - `headerNote`

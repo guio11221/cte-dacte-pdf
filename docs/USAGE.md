@@ -36,6 +36,40 @@ try {
 }
 ```
 
+## Uso por linha de comando
+
+O pacote tambem pode expor um bin chamado `cte-pdf`.
+
+```bash
+cte-pdf ./cte.xml
+```
+
+Forcando o tipo esperado:
+
+```bash
+cte-pdf --autorizado ./cte.xml
+cte-pdf --cancelado ./evento-cancelamento.xml
+cte-pdf --cce ./evento-cce.xml
+```
+
+Definindo saida:
+
+```bash
+cte-pdf --autorizado ./cte.xml -o ./saida/dacte.pdf
+```
+
+Notas visuais:
+
+```bash
+cte-pdf ./cte.xml --header-note "Gerado pelo ERP" --watermark "USO INTERNO"
+```
+
+Comportamento:
+
+- sem flag, o CLI detecta automaticamente o tipo do XML
+- com flag, o CLI valida se o XML bate com o tipo esperado
+- se houver divergencia, o comando falha com mensagem clara
+
 ## Gerar PDF e salvar automaticamente
 
 ```ts
